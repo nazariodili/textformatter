@@ -381,6 +381,31 @@ function ToolbarButton({
     )
 }
 
+function DropdownSectionTitle({
+    icon,
+    label,
+}: {
+    icon: React.ReactNode
+    label: string
+}) {
+    return (
+        <div
+            style={{
+                display: "flex",
+                alignItems: "center",
+                gap: 8,
+                fontSize: 12,
+                fontWeight: 700,
+                color: "#2D3A53",
+                marginBottom: 8,
+            }}
+        >
+            <span style={{ display: "grid", placeItems: "center" }}>{icon}</span>
+            <span>{label}</span>
+        </div>
+    )
+}
+
 function InputField(
     props: React.InputHTMLAttributes<HTMLInputElement> & { label?: string }
 ) {
@@ -581,6 +606,7 @@ export default function TextFormatterFramerResponsive(props: Props) {
     const [searchValue, setSearchValue] = React.useState("")
     const [replaceValue, setReplaceValue] = React.useState("")
     const [filterWord, setFilterWord] = React.useState("")
+    const [toolsOpen, setToolsOpen] = React.useState(false)
 
     const textareaRef = React.useRef<HTMLTextAreaElement | null>(null)
 
@@ -880,63 +906,72 @@ export default function TextFormatterFramerResponsive(props: Props) {
                         flexWrap: "wrap",
                         gap: 6,
                         alignItems: "center",
+                        justifyContent: "space-between",
                         paddingBottom: 8,
                         marginBottom: 8,
                         borderBottom: "1px solid #E5EAF2",
                     }}
                 >
-                    <ToolbarButton
-                        label="Undo"
-                        icon={<Undo2 size={15} />}
-                        onClick={undo}
-                        accent={accent}
-                    />
-                    <ToolbarButton
-                        label="Redo"
-                        icon={<Redo2 size={15} />}
-                        onClick={redo}
-                        accent={accent}
-                    />
-                    <ToolbarButton
-                        label="Maiuscolo"
-                        icon={<CaseSensitive size={15} />}
-                        onClick={() =>
-                            applyText(text.toUpperCase(), "Convertito in maiuscolo")
-                        }
-                        accent={accent}
-                    />
-                    <ToolbarButton
-                        label="Iniziali maiuscole"
-                        icon={<Sparkles size={15} />}
-                        onClick={() => applyText(toTitleCase(text), "Iniziali aggiornate")}
-                        accent={accent}
-                    />
-                    <ToolbarButton
-                        label="Ordina A-Z"
-                        icon={<ArrowUpDown size={15} />}
-                        onClick={() => applyText(sortLinesAZ(text), "Righe ordinate A-Z")}
-                        accent={accent}
-                    />
-                    <ToolbarButton
-                        label="Rimuovi righe vuote"
-                        icon={<Pilcrow size={15} />}
-                        onClick={() =>
-                            applyText(removeEmptyLines(text), "Righe vuote rimosse")
-                        }
-                        accent={accent}
-                    />
-                    <ToolbarButton
-                        label="Copia"
-                        icon={<Copy size={15} />}
-                        onClick={copyText}
-                        accent={accent}
-                    />
-                    <ToolbarButton
-                        label="Cancella"
-                        icon={<Trash2 size={15} />}
-                        onClick={clearAll}
-                        accent={accent2}
-                    />
+                    <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
+                        <ToolbarButton
+                            label="Tutto maiuscolo"
+                            icon={<CaseSensitive size={15} />}
+                            onClick={() =>
+                                applyText(text.toUpperCase(), "Convertito in maiuscolo")
+                            }
+                            accent={accent}
+                        />
+                        <ToolbarButton
+                            label="Tutto minuscolo"
+                            icon={<CaseSensitive size={15} />}
+                            onClick={() =>
+                                applyText(text.toLowerCase(), "Convertito in minuscolo")
+                            }
+                            accent={accent}
+                        />
+                        <ToolbarButton
+                            label="Iniziali maiuscole"
+                            icon={<Sparkles size={15} />}
+                            onClick={() =>
+                                applyText(toTitleCase(text), "Iniziali aggiornate")
+                            }
+                            accent={accent}
+                        />
+                        <ToolbarButton
+                            label="Maiuscolo dopo punto"
+                            icon={<Pilcrow size={15} />}
+                            onClick={() =>
+                                applyText(
+                                    capitalizeAfterPunctuation(text),
+                                    "Frasi aggiornate"
+                                )
+                            }
+                            accent={accent}
+                        />
+                        <ToolbarButton
+                            label="Maiuscole casuali"
+                            icon={<RefreshCw size={15} />}
+                            onClick={() =>
+                                applyText(randomCase(text), "Case casuale applicato")
+                            }
+                            accent={accent}
+                        />
+                    </div>
+
+                    <button
+                        onClick={() => setToolsOpen((prev) => !prev)}
+                        style={{
+                            border: "1px solid #DCE2ED",
+                            background: "#FFFFFF",
+                            borderRadius: 8,
+                            padding: "7px 10px",
+                            fontSize: 12,
+                            fontWeight: 600,
+                            cursor: "pointer",
+                        }}
+                    >
+                        {toolsOpen ? "Chiudi strumenti" : "Altri strumenti"}
+                    </button>
                 </div>
                 <textarea
                     ref={textareaRef}
@@ -958,626 +993,246 @@ export default function TextFormatterFramerResponsive(props: Props) {
                         boxSizing: "border-box",
                     }}
                 />
-            </Card>
 
-            <div style={{ height: 10 }} />
+                {toolsOpen && (
+                    <div
+                        style={{
+                            marginTop: 10,
+                            border: "1px solid #DFE5EF",
+                            borderRadius: 10,
+                            background: "#F8FAFD",
+                            padding: 10,
+                            display: "grid",
+                            gap: 12,
+                        }}
+                    >
+                        <div>
+                            <DropdownSectionTitle
+                                icon={<RefreshCw size={14} />}
+                                label="Trasforma testo"
+                            />
+                            <div
+                                style={{
+                                    display: "grid",
+                                    gridTemplateColumns:
+                                        "repeat(auto-fit, minmax(260px, 1fr))",
+                                    gap: 12,
+                                }}
+                            >
+                                <Accordion
+                                    title="Inversioni"
+                                    icon={<RefreshCw size={16} />}
+                                    subtitle="Inverti testo completo, parole, lettere e ordine delle righe"
+                                    defaultOpen
+                                >
+                                    <div style={{ display: "grid", gap: 8 }}>
+                                        <ActionButton
+                                            label="Inverti testo"
+                                            onClick={() =>
+                                                applyText(reverseText(text), "Testo invertito")
+                                            }
+                                            accent={accent}
+                                        />
+                                        <ActionButton
+                                            label="Inverti parole"
+                                            onClick={() =>
+                                                applyText(reverseWords(text), "Parole invertite")
+                                            }
+                                            accent={accent}
+                                            secondary
+                                        />
+                                        <ActionButton
+                                            label="Inverti lettere di ogni parola"
+                                            onClick={() =>
+                                                applyText(
+                                                    reverseLettersEachWord(text),
+                                                    "Lettere invertite"
+                                                )
+                                            }
+                                            accent={accent}
+                                            secondary
+                                        />
+                                        <ActionButton
+                                            label="Capovolgi ordine righe"
+                                            onClick={() =>
+                                                applyText(
+                                                    reverseLinesOrder(text),
+                                                    "Ordine righe invertito"
+                                                )
+                                            }
+                                            accent={accent}
+                                            secondary
+                                        />
+                                    </div>
+                                </Accordion>
 
-            <div style={{ display: "grid", gap: 10 }}>
-                <div style={{ fontSize: 12, fontWeight: 700, color: "#52607A" }}>
-                    Trasforma testo
-                </div>
-                <div
-                    style={{
-                        display: "grid",
-                        gridTemplateColumns:
-                            "repeat(auto-fit, minmax(260px, 1fr))",
-                        gap: 12,
-                    }}
-                >
-                    <Accordion
-                        title="Maiuscole e minuscole"
-                        icon={<CaseSensitive size={16} />}
-                        subtitle="Conversioni rapide per titolo, frasi e casing casuale"
-                        defaultOpen
-                    >
-                        <div style={{ display: "grid", gap: 8 }}>
-                            <ActionButton
-                                label="Tutto maiuscolo"
-                                onClick={() =>
-                                    applyText(
-                                        text.toUpperCase(),
-                                        "Convertito in maiuscolo"
-                                    )
-                                }
-                                accent={accent}
-                            />
-                            <ActionButton
-                                label="Tutto minuscolo"
-                                onClick={() =>
-                                    applyText(
-                                        text.toLowerCase(),
-                                        "Convertito in minuscolo"
-                                    )
-                                }
-                                accent={accent}
-                                secondary
-                            />
-                            <ActionButton
-                                label="Iniziali maiuscole"
-                                onClick={() =>
-                                    applyText(
-                                        toTitleCase(text),
-                                        "Iniziali aggiornate"
-                                    )
-                                }
-                                accent={accent}
-                                secondary
-                            />
-                            <ActionButton
-                                label="Maiuscolo dopo punto"
-                                onClick={() =>
-                                    applyText(
-                                        capitalizeAfterPunctuation(text),
-                                        "Frasi aggiornate"
-                                    )
-                                }
-                                accent={accent}
-                                secondary
-                            />
-                            <ActionButton
-                                label="Maiuscole casuali"
-                                onClick={() =>
-                                    applyText(
-                                        randomCase(text),
-                                        "Case casuale applicato"
-                                    )
-                                }
-                                accent={accent}
-                                secondary
-                            />
-                        </div>
-                    </Accordion>
-
-                    <Accordion
-                        title="Inversioni"
-                        icon={<RefreshCw size={16} />}
-                        subtitle="Inverti testo completo, parole, lettere e ordine delle righe"
-                        defaultOpen
-                    >
-                        <div style={{ display: "grid", gap: 8 }}>
-                            <ActionButton
-                                label="Inverti testo"
-                                onClick={() =>
-                                    applyText(
-                                        reverseText(text),
-                                        "Testo invertito"
-                                    )
-                                }
-                                accent={accent}
-                            />
-                            <ActionButton
-                                label="Inverti parole"
-                                onClick={() =>
-                                    applyText(
-                                        reverseWords(text),
-                                        "Parole invertite"
-                                    )
-                                }
-                                accent={accent}
-                                secondary
-                            />
-                            <ActionButton
-                                label="Inverti lettere di ogni parola"
-                                onClick={() =>
-                                    applyText(
-                                        reverseLettersEachWord(text),
-                                        "Lettere invertite"
-                                    )
-                                }
-                                accent={accent}
-                                secondary
-                            />
-                            <ActionButton
-                                label="Capovolgi ordine righe"
-                                onClick={() =>
-                                    applyText(
-                                        reverseLinesOrder(text),
-                                        "Ordine righe invertito"
-                                    )
-                                }
-                                accent={accent}
-                                secondary
-                            />
-                        </div>
-                    </Accordion>
-
-                    <Accordion
-                        title="Ordinamenti"
-                        icon={<ArrowUpDown size={16} />}
-                        subtitle="Ordina il contenuto in vari modi e aggiungi numerazione"
-                    >
-                        <div style={{ display: "grid", gap: 8 }}>
-                            <ActionButton
-                                label="Ordina righe A-Z"
-                                onClick={() =>
-                                    applyText(
-                                        sortLinesAZ(text),
-                                        "Righe ordinate A-Z"
-                                    )
-                                }
-                                accent={accent}
-                            />
-                            <ActionButton
-                                label="Ordina righe Z-A"
-                                onClick={() =>
-                                    applyText(
-                                        sortLinesZA(text),
-                                        "Righe ordinate Z-A"
-                                    )
-                                }
-                                accent={accent}
-                                secondary
-                            />
-                            <ActionButton
-                                label="Ordina per lunghezza"
-                                onClick={() =>
-                                    applyText(
-                                        sortLinesByLength(text),
-                                        "Righe ordinate per lunghezza"
-                                    )
-                                }
-                                accent={accent}
-                                secondary
-                            />
-                            <ActionButton
-                                label="Aggiungi numerazione righe"
-                                onClick={() =>
-                                    applyText(
-                                        addLineNumbers(text),
-                                        "Numerazione aggiunta"
-                                    )
-                                }
-                                accent={accent}
-                                secondary
-                            />
-                        </div>
-                    </Accordion>
-                </div>
-                <div style={{ fontSize: 12, fontWeight: 700, color: "#52607A" }}>
-                    Righe e struttura
-                </div>
-                <div
-                    style={{
-                        display: "grid",
-                        gridTemplateColumns:
-                            "repeat(auto-fit, minmax(260px, 1fr))",
-                        gap: 12,
-                    }}
-                >
-                    <Accordion
-                        title="Duplicati"
-                        icon={<CopyMinus size={16} />}
-                        subtitle="Elimina parole o righe duplicate con diversi criteri"
-                        defaultOpen
-                    >
-                        <div style={{ display: "grid", gap: 8 }}>
-                            <ActionButton
-                                label="Parole uniche A-Z"
-                                onClick={() =>
-                                    applyText(
-                                        uniqueWordsAZ(text),
-                                        "Duplicati rimossi"
-                                    )
-                                }
-                                accent={accent}
-                            />
-                            <ActionButton
-                                label="Parole uniche Z-A"
-                                onClick={() =>
-                                    applyText(
-                                        uniqueWordsZA(text),
-                                        "Duplicati rimossi"
-                                    )
-                                }
-                                accent={accent}
-                                secondary
-                            />
-                            <ActionButton
-                                label="Rimuovi righe duplicate (insensibile)"
-                                onClick={() =>
-                                    applyText(
-                                        removeDuplicateLines(text, false),
-                                        "Righe duplicate rimosse"
-                                    )
-                                }
-                                accent={accent}
-                                secondary
-                            />
-                            <ActionButton
-                                label="Rimuovi righe duplicate (sensibile)"
-                                onClick={() =>
-                                    applyText(
-                                        removeDuplicateLines(text, true),
-                                        "Righe duplicate rimosse"
-                                    )
-                                }
-                                accent={accent}
-                                secondary
-                            />
-                        </div>
-                    </Accordion>
-
-                    <Accordion
-                        title="Capoversi"
-                        icon={<Pilcrow size={16} />}
-                        subtitle="Sostituisci o rimuovi i ritorni a capo"
-                    >
-                        <div style={{ display: "grid", gap: 8 }}>
-                            <InputField
-                                label="Sostituisci tutti i capoversi con"
-                                value={replaceBreaksWith}
-                                onChange={(e) =>
-                                    setReplaceBreaksWith(e.target.value)
-                                }
-                                placeholder="es. spazio, virgola, |"
-                            />
-                            <div style={{ display: "grid", gap: 8 }}>
-                                <ActionButton
-                                    label="Applica"
-                                    onClick={() =>
-                                        applyText(
-                                            replaceLineBreaks(
-                                                text,
-                                                replaceBreaksWith
-                                            ),
-                                            "Capoversi sostituiti"
-                                        )
-                                    }
-                                    accent={accent}
-                                />
-                                <ActionButton
-                                    label="Rimuovi tutti i capoversi"
-                                    onClick={() =>
-                                        applyText(
-                                            removeAllLineBreaks(text),
-                                            "Capoversi rimossi"
-                                        )
-                                    }
-                                    accent={accent}
-                                    secondary
-                                />
+                                <Accordion
+                                    title="Ordinamenti"
+                                    icon={<ArrowUpDown size={16} />}
+                                    subtitle="Ordina il contenuto in vari modi e aggiungi numerazione"
+                                >
+                                    <div style={{ display: "grid", gap: 8 }}>
+                                        <ActionButton
+                                            label="Ordina righe A-Z"
+                                            onClick={() =>
+                                                applyText(sortLinesAZ(text), "Righe ordinate A-Z")
+                                            }
+                                            accent={accent}
+                                        />
+                                        <ActionButton
+                                            label="Ordina righe Z-A"
+                                            onClick={() =>
+                                                applyText(sortLinesZA(text), "Righe ordinate Z-A")
+                                            }
+                                            accent={accent}
+                                            secondary
+                                        />
+                                        <ActionButton
+                                            label="Ordina per lunghezza"
+                                            onClick={() =>
+                                                applyText(
+                                                    sortLinesByLength(text),
+                                                    "Righe ordinate per lunghezza"
+                                                )
+                                            }
+                                            accent={accent}
+                                            secondary
+                                        />
+                                        <ActionButton
+                                            label="Aggiungi numerazione righe"
+                                            onClick={() =>
+                                                applyText(addLineNumbers(text), "Numerazione aggiunta")
+                                            }
+                                            accent={accent}
+                                            secondary
+                                        />
+                                    </div>
+                                </Accordion>
                             </div>
                         </div>
-                    </Accordion>
 
-                    <Accordion
-                        title="Prefisso e suffisso"
-                        icon={<Tag size={16} />}
-                        subtitle="Aggiungi testo all'inizio o alla fine di ogni riga"
-                    >
-                        <div style={{ display: "grid", gap: 8 }}>
-                            <InputField
-                                label="Prefisso"
-                                value={prefix}
-                                onChange={(e) => setPrefix(e.target.value)}
-                                placeholder="es. - "
+                        <div>
+                            <DropdownSectionTitle
+                                icon={<Tag size={14} />}
+                                label="Righe e struttura"
                             />
-                            <InputField
-                                label="Suffisso"
-                                value={suffix}
-                                onChange={(e) => setSuffix(e.target.value)}
-                                placeholder="es. ;"
-                            />
-                            <ActionButton
-                                label="Applica a tutte le righe"
-                                onClick={() =>
-                                    applyText(
-                                        addPrefixSuffixToLines(
-                                            text,
-                                            prefix,
-                                            suffix
-                                        ),
-                                        "Prefisso e suffisso applicati"
-                                    )
-                                }
-                                accent={accent}
-                            />
-                        </div>
-                    </Accordion>
+                            <div
+                                style={{
+                                    display: "grid",
+                                    gridTemplateColumns:
+                                        "repeat(auto-fit, minmax(260px, 1fr))",
+                                    gap: 12,
+                                }}
+                            >
+                                <Accordion
+                                    title="Duplicati"
+                                    icon={<CopyMinus size={16} />}
+                                    subtitle="Elimina parole o righe duplicate con diversi criteri"
+                                >
+                                    <div style={{ display: "grid", gap: 8 }}>
+                                        <ActionButton label="Parole uniche A-Z" onClick={() => applyText(uniqueWordsAZ(text), "Duplicati rimossi")} accent={accent} />
+                                        <ActionButton label="Parole uniche Z-A" onClick={() => applyText(uniqueWordsZA(text), "Duplicati rimossi")} accent={accent} secondary />
+                                        <ActionButton label="Rimuovi righe duplicate (insensibile)" onClick={() => applyText(removeDuplicateLines(text, false), "Righe duplicate rimosse")} accent={accent} secondary />
+                                        <ActionButton label="Rimuovi righe duplicate (sensibile)" onClick={() => applyText(removeDuplicateLines(text, true), "Righe duplicate rimosse")} accent={accent} secondary />
+                                    </div>
+                                </Accordion>
 
-                    <Accordion
-                        title="Crea capoversi"
-                        icon={<Scissors size={16} />}
-                        subtitle="Inserisci nuovi ritorni a capo dopo token o ogni X caratteri"
-                    >
-                        <div style={{ display: "grid", gap: 8 }}>
-                            <InputField
-                                label="Dopo parola o carattere"
-                                value={breakAfter}
-                                onChange={(e) => setBreakAfter(e.target.value)}
-                                placeholder="es. , oppure parola"
-                            />
-                            <ActionButton
-                                label="Inserisci capoverso"
-                                onClick={() =>
-                                    applyText(
-                                        createBreakAfterToken(text, breakAfter),
-                                        "Capoversi inseriti"
-                                    )
-                                }
-                                accent={accent}
-                            />
-                            <InputField
-                                label="Ogni X caratteri"
-                                value={everyChars}
-                                onChange={(e) => setEveryChars(e.target.value)}
-                                inputMode="numeric"
-                                placeholder="es. 30"
-                            />
-                            <ActionButton
-                                label="Applica ogni X caratteri"
-                                onClick={() =>
-                                    applyText(
-                                        createBreakEveryNChars(
-                                            text,
-                                            Number(everyChars)
-                                        ),
-                                        "Capoversi creati"
-                                    )
-                                }
-                                accent={accent}
-                                secondary
-                            />
-                        </div>
-                    </Accordion>
-                </div>
-                <div style={{ fontSize: 12, fontWeight: 700, color: "#52607A" }}>
-                    Pulizia contenuto
-                </div>
-                <div
-                    style={{
-                        display: "grid",
-                        gridTemplateColumns:
-                            "repeat(auto-fit, minmax(260px, 1fr))",
-                        gap: 12,
-                    }}
-                >
-                    <Accordion
-                        title="Righe vuote e spazi"
-                        icon={<Sparkles size={16} />}
-                        subtitle="Riduci il rumore e normalizza la spaziatura"
-                        defaultOpen
-                    >
-                        <div style={{ display: "grid", gap: 8 }}>
-                            <ActionButton
-                                label="Rimuovi righe vuote"
-                                onClick={() =>
-                                    applyText(
-                                        removeEmptyLines(text),
-                                        "Righe vuote rimosse"
-                                    )
-                                }
-                                accent={accent}
-                            />
-                            <ActionButton
-                                label="Riduci righe vuote multiple"
-                                onClick={() =>
-                                    applyText(
-                                        reduceMultipleEmptyLines(text),
-                                        "Righe vuote ridotte"
-                                    )
-                                }
-                                accent={accent}
-                                secondary
-                            />
-                            <ActionButton
-                                label="Elimina spazi doppi (1 passata)"
-                                onClick={() =>
-                                    applyText(
-                                        removeDoubleSpacesOnce(text),
-                                        "Spazi doppi ridotti"
-                                    )
-                                }
-                                accent={accent}
-                                secondary
-                            />
-                            <ActionButton
-                                label="Elimina spazi doppi (tutti)"
-                                onClick={() =>
-                                    applyText(
-                                        removeDoubleSpacesAll(text),
-                                        "Spazi doppi rimossi"
-                                    )
-                                }
-                                accent={accent}
-                                secondary
-                            />
-                        </div>
-                    </Accordion>
+                                <Accordion
+                                    title="Capoversi"
+                                    icon={<Pilcrow size={16} />}
+                                    subtitle="Sostituisci o rimuovi i ritorni a capo"
+                                >
+                                    <div style={{ display: "grid", gap: 8 }}>
+                                        <InputField label="Sostituisci tutti i capoversi con" value={replaceBreaksWith} onChange={(e) => setReplaceBreaksWith(e.target.value)} placeholder="es. spazio, virgola, |" />
+                                        <ActionButton label="Applica" onClick={() => applyText(replaceLineBreaks(text, replaceBreaksWith), "Capoversi sostituiti")} accent={accent} />
+                                        <ActionButton label="Rimuovi tutti i capoversi" onClick={() => applyText(removeAllLineBreaks(text), "Capoversi rimossi")} accent={accent} secondary />
+                                    </div>
+                                </Accordion>
 
-                    <Accordion
-                        title="Accenti"
-                        icon={<Languages size={16} />}
-                        subtitle="Rimuovi o converti le vocali accentate"
-                    >
-                        <div style={{ display: "grid", gap: 8 }}>
-                            <ActionButton
-                                label="Rimuovi accenti"
-                                onClick={() =>
-                                    applyText(
-                                        removeAccents(text),
-                                        "Accenti rimossi"
-                                    )
-                                }
-                                accent={accent}
-                            />
-                            <ActionButton
-                                label="Accenti → apostrofo"
-                                onClick={() =>
-                                    applyText(
-                                        accentToApostrophe(text),
-                                        "Accenti convertiti"
-                                    )
-                                }
-                                accent={accent}
-                                secondary
-                            />
-                        </div>
-                    </Accordion>
+                                <Accordion
+                                    title="Prefisso e suffisso"
+                                    icon={<Tag size={16} />}
+                                    subtitle="Aggiungi testo all'inizio o alla fine di ogni riga"
+                                >
+                                    <div style={{ display: "grid", gap: 8 }}>
+                                        <InputField label="Prefisso" value={prefix} onChange={(e) => setPrefix(e.target.value)} placeholder="es. - " />
+                                        <InputField label="Suffisso" value={suffix} onChange={(e) => setSuffix(e.target.value)} placeholder="es. ;" />
+                                        <ActionButton label="Applica a tutte le righe" onClick={() => applyText(addPrefixSuffixToLines(text, prefix, suffix), "Prefisso e suffisso applicati")} accent={accent} />
+                                    </div>
+                                </Accordion>
 
-                    <Accordion
-                        title="Ordinamento numeri"
-                        icon={<Hash size={16} />}
-                        subtitle="Ordina numeri in linea o su righe separate"
-                    >
-                        <div style={{ display: "grid", gap: 8 }}>
-                            <ActionButton
-                                label="Ordina numeri separati da spazio"
-                                onClick={() =>
-                                    applyText(
-                                        sortNumbersInLine(text, "space"),
-                                        "Numeri ordinati"
-                                    )
-                                }
-                                accent={accent}
-                            />
-                            <ActionButton
-                                label="Ordina numeri separati da virgola"
-                                onClick={() =>
-                                    applyText(
-                                        sortNumbersInLine(text, "comma"),
-                                        "Numeri ordinati"
-                                    )
-                                }
-                                accent={accent}
-                                secondary
-                            />
-                            <ActionButton
-                                label="Ordina righe numeriche"
-                                onClick={() =>
-                                    applyText(
-                                        sortNumericLines(text),
-                                        "Righe numeriche ordinate"
-                                    )
-                                }
-                                accent={accent}
-                                secondary
-                            />
+                                <Accordion
+                                    title="Crea capoversi"
+                                    icon={<Scissors size={16} />}
+                                    subtitle="Inserisci nuovi ritorni a capo dopo token o ogni X caratteri"
+                                >
+                                    <div style={{ display: "grid", gap: 8 }}>
+                                        <InputField label="Dopo parola o carattere" value={breakAfter} onChange={(e) => setBreakAfter(e.target.value)} placeholder="es. , oppure parola" />
+                                        <ActionButton label="Inserisci capoverso" onClick={() => applyText(createBreakAfterToken(text, breakAfter), "Capoversi inseriti")} accent={accent} />
+                                        <InputField label="Ogni X caratteri" value={everyChars} onChange={(e) => setEveryChars(e.target.value)} inputMode="numeric" placeholder="es. 30" />
+                                        <ActionButton label="Applica ogni X caratteri" onClick={() => applyText(createBreakEveryNChars(text, Number(everyChars)), "Capoversi creati")} accent={accent} secondary />
+                                    </div>
+                                </Accordion>
+                            </div>
                         </div>
-                    </Accordion>
-                </div>
-                <div style={{ fontSize: 12, fontWeight: 700, color: "#52607A" }}>
-                    Cerca, sostituisci e filtra
-                </div>
-                <div
-                    style={{
-                        display: "grid",
-                        gridTemplateColumns:
-                            "repeat(auto-fit, minmax(260px, 1fr))",
-                        gap: 12,
-                    }}
-                >
-                    <Accordion
-                        title="Sostituisci testo"
-                        icon={<Search size={16} />}
-                        subtitle="Cerca e sostituisci stringhe nel contenuto"
-                        defaultOpen
-                    >
-                        <div style={{ display: "grid", gap: 8 }}>
-                            <InputField
-                                label="Cerca"
-                                value={searchValue}
-                                onChange={(e) => setSearchValue(e.target.value)}
-                                placeholder="Parola o carattere"
-                            />
-                            <InputField
-                                label="Sostituisci con"
-                                value={replaceValue}
-                                onChange={(e) =>
-                                    setReplaceValue(e.target.value)
-                                }
-                                placeholder="Nuovo testo"
-                            />
-                            <ActionButton
-                                label="Sostituisci tutto"
-                                onClick={() =>
-                                    applyText(
-                                        replaceTextAll(
-                                            text,
-                                            searchValue,
-                                            replaceValue
-                                        ),
-                                        "Sostituzione completata"
-                                    )
-                                }
-                                accent={accent}
-                            />
-                            <ActionButton
-                                label="Sostituisci dentro ogni riga"
-                                onClick={() =>
-                                    applyText(
-                                        replaceWordInsideLines(
-                                            text,
-                                            searchValue,
-                                            replaceValue
-                                        ),
-                                        "Sostituzione per riga completata"
-                                    )
-                                }
-                                accent={accent}
-                                secondary
-                            />
-                        </div>
-                    </Accordion>
 
-                    <Accordion
-                        title="Filtra righe"
-                        icon={<Filter size={16} />}
-                        subtitle="Estrai o rimuovi righe in base a una parola"
-                    >
-                        <div style={{ display: "grid", gap: 8 }}>
-                            <InputField
-                                label="Parola filtro"
-                                value={filterWord}
-                                onChange={(e) => setFilterWord(e.target.value)}
-                                placeholder="Parola da cercare"
+                        <div>
+                            <DropdownSectionTitle
+                                icon={<Languages size={14} />}
+                                label="Pulizia contenuto"
                             />
-                            <ActionButton
-                                label="Estrai righe con la parola"
-                                onClick={() =>
-                                    applyText(
-                                        extractLinesWithWord(text, filterWord),
-                                        "Righe estratte"
-                                    )
-                                }
-                                accent={accent}
-                            />
-                            <ActionButton
-                                label="Rimuovi righe con la parola"
-                                onClick={() =>
-                                    applyText(
-                                        removeLinesWithWord(text, filterWord),
-                                        "Righe rimosse"
-                                    )
-                                }
-                                accent={accent}
-                                secondary
-                            />
-                            <ActionButton
-                                label="Mantieni solo righe con la parola"
-                                onClick={() =>
-                                    applyText(
-                                        keepOnlyLinesWithWord(text, filterWord),
-                                        "Filtro applicato"
-                                    )
-                                }
-                                accent={accent}
-                                secondary
-                            />
+                            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))", gap: 12 }}>
+                                <Accordion title="Righe vuote e spazi" icon={<Sparkles size={16} />} subtitle="Riduci il rumore e normalizza la spaziatura">
+                                    <div style={{ display: "grid", gap: 8 }}>
+                                        <ActionButton label="Rimuovi righe vuote" onClick={() => applyText(removeEmptyLines(text), "Righe vuote rimosse")} accent={accent} />
+                                        <ActionButton label="Riduci righe vuote multiple" onClick={() => applyText(reduceMultipleEmptyLines(text), "Righe vuote ridotte")} accent={accent} secondary />
+                                        <ActionButton label="Elimina spazi doppi (1 passata)" onClick={() => applyText(removeDoubleSpacesOnce(text), "Spazi doppi ridotti")} accent={accent} secondary />
+                                        <ActionButton label="Elimina spazi doppi (tutti)" onClick={() => applyText(removeDoubleSpacesAll(text), "Spazi doppi rimossi")} accent={accent} secondary />
+                                    </div>
+                                </Accordion>
+                                <Accordion title="Accenti" icon={<Languages size={16} />} subtitle="Rimuovi o converti le vocali accentate">
+                                    <div style={{ display: "grid", gap: 8 }}>
+                                        <ActionButton label="Rimuovi accenti" onClick={() => applyText(removeAccents(text), "Accenti rimossi")} accent={accent} />
+                                        <ActionButton label="Accenti → apostrofo" onClick={() => applyText(accentToApostrophe(text), "Accenti convertiti")} accent={accent} secondary />
+                                    </div>
+                                </Accordion>
+                                <Accordion title="Ordinamento numeri" icon={<Hash size={16} />} subtitle="Ordina numeri in linea o su righe separate">
+                                    <div style={{ display: "grid", gap: 8 }}>
+                                        <ActionButton label="Ordina numeri separati da spazio" onClick={() => applyText(sortNumbersInLine(text, "space"), "Numeri ordinati")} accent={accent} />
+                                        <ActionButton label="Ordina numeri separati da virgola" onClick={() => applyText(sortNumbersInLine(text, "comma"), "Numeri ordinati")} accent={accent} secondary />
+                                        <ActionButton label="Ordina righe numeriche" onClick={() => applyText(sortNumericLines(text), "Righe numeriche ordinate")} accent={accent} secondary />
+                                    </div>
+                                </Accordion>
+                            </div>
                         </div>
-                    </Accordion>
-                </div>
-            </div>
+
+                        <div>
+                            <DropdownSectionTitle
+                                icon={<Search size={14} />}
+                                label="Cerca, sostituisci e filtra"
+                            />
+                            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))", gap: 12 }}>
+                                <Accordion title="Sostituisci testo" icon={<Search size={16} />} subtitle="Cerca e sostituisci stringhe nel contenuto">
+                                    <div style={{ display: "grid", gap: 8 }}>
+                                        <InputField label="Cerca" value={searchValue} onChange={(e) => setSearchValue(e.target.value)} placeholder="Parola o carattere" />
+                                        <InputField label="Sostituisci con" value={replaceValue} onChange={(e) => setReplaceValue(e.target.value)} placeholder="Nuovo testo" />
+                                        <ActionButton label="Sostituisci tutto" onClick={() => applyText(replaceTextAll(text, searchValue, replaceValue), "Sostituzione completata")} accent={accent} />
+                                        <ActionButton label="Sostituisci dentro ogni riga" onClick={() => applyText(replaceWordInsideLines(text, searchValue, replaceValue), "Sostituzione per riga completata")} accent={accent} secondary />
+                                    </div>
+                                </Accordion>
+                                <Accordion title="Filtra righe" icon={<Filter size={16} />} subtitle="Estrai o rimuovi righe in base a una parola">
+                                    <div style={{ display: "grid", gap: 8 }}>
+                                        <InputField label="Parola filtro" value={filterWord} onChange={(e) => setFilterWord(e.target.value)} placeholder="Parola da cercare" />
+                                        <ActionButton label="Estrai righe con la parola" onClick={() => applyText(extractLinesWithWord(text, filterWord), "Righe estratte")} accent={accent} />
+                                        <ActionButton label="Rimuovi righe con la parola" onClick={() => applyText(removeLinesWithWord(text, filterWord), "Righe rimosse")} accent={accent} secondary />
+                                        <ActionButton label="Mantieni solo righe con la parola" onClick={() => applyText(keepOnlyLinesWithWord(text, filterWord), "Filtro applicato")} accent={accent} secondary />
+                                    </div>
+                                </Accordion>
+                            </div>
+                        </div>
+                    </div>
+                )}
+            </Card>
 
             {toast && (
                 <div
