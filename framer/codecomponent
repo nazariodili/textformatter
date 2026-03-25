@@ -1,5 +1,26 @@
 import * as React from "react"
 import { addPropertyControls, ControlType } from "framer"
+import {
+    ChevronDown,
+    Undo2,
+    Redo2,
+    MousePointerClick,
+    Copy,
+    Eraser,
+    Trash2,
+    CaseSensitive,
+    RefreshCw,
+    ArrowUpDown,
+    CopyMinus,
+    Pilcrow,
+    Tag,
+    Scissors,
+    Sparkles,
+    Languages,
+    Hash,
+    Search,
+    Filter,
+} from "lucide-react"
 
 type Props = {
     title: string
@@ -311,11 +332,15 @@ function TabButton({
 
 function ActionButton({
     label,
+    icon,
+    iconOnly = false,
     onClick,
     accent,
     secondary = false,
 }: {
     label: string
+    icon?: React.ReactNode
+    iconOnly?: boolean
     onClick: () => void
     accent: string
     secondary?: boolean
@@ -324,9 +349,11 @@ function ActionButton({
         <button
             onClick={onClick}
             style={{
-                width: "100%",
+                width: iconOnly ? 46 : "100%",
+                minWidth: iconOnly ? 46 : undefined,
                 minHeight: 42,
-                padding: "10px 12px",
+                height: iconOnly ? 46 : "auto",
+                padding: iconOnly ? 0 : "10px 12px",
                 borderRadius: 12,
                 border: secondary ? "1px solid rgba(0,0,0,0.08)" : "none",
                 background: secondary ? "white" : accent,
@@ -335,10 +362,17 @@ function ActionButton({
                 fontWeight: 600,
                 cursor: "pointer",
                 boxShadow: secondary ? "none" : "0 1px 2px rgba(0,0,0,0.08)",
-                textAlign: "left",
+                textAlign: iconOnly ? "center" : "left",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: iconOnly ? "center" : "flex-start",
+                gap: 8,
             }}
+            aria-label={label}
+            title={label}
         >
-            {label}
+            {icon}
+            {!iconOnly && <span>{label}</span>}
         </button>
     )
 }
@@ -397,11 +431,13 @@ function Card({
 function Accordion({
     title,
     subtitle,
+    icon,
     defaultOpen = false,
     children,
 }: {
     title: string
     subtitle?: string
+    icon?: React.ReactNode
     defaultOpen?: boolean
     children: React.ReactNode
 }) {
@@ -432,7 +468,18 @@ function Accordion({
                 }}
             >
                 <div style={{ minWidth: 0 }}>
-                    <div style={{ fontSize: 14, fontWeight: 700 }}>{title}</div>
+                    <div
+                        style={{
+                            fontSize: 14,
+                            fontWeight: 700,
+                            display: "flex",
+                            alignItems: "center",
+                            gap: 8,
+                        }}
+                    >
+                        {icon}
+                        <span>{title}</span>
+                    </div>
                     {subtitle && (
                         <div
                             style={{
@@ -462,7 +509,7 @@ function Accordion({
                         fontWeight: 700,
                     }}
                 >
-                    ˅
+                    <ChevronDown size={16} strokeWidth={2.4} />
                 </div>
             </button>
 
@@ -661,14 +708,19 @@ export default function TextFormatterFramerResponsive(props: Props) {
                 <div
                     style={{
                         display: "flex",
-                        justifyContent: "space-between",
                         alignItems: "flex-start",
-                        gap: 12,
+                        justifyContent: "space-between",
+                        gap: 16,
                         flexWrap: "wrap",
                         marginBottom: 12,
                     }}
                 >
-                    <div style={{ minWidth: 0 }}>
+                    <div
+                        style={{
+                            flex: "1 1 320px",
+                            minWidth: 0,
+                        }}
+                    >
                         <div
                             style={{
                                 fontSize: 22,
@@ -679,6 +731,7 @@ export default function TextFormatterFramerResponsive(props: Props) {
                         >
                             {title}
                         </div>
+
                         <div
                             style={{
                                 fontSize: 13,
@@ -693,45 +746,58 @@ export default function TextFormatterFramerResponsive(props: Props) {
 
                     <div
                         style={{
-                            display: "grid",
-                            gridTemplateColumns:
-                                "repeat(auto-fit, minmax(140px, 1fr))",
+                            display: "flex",
+                            flexWrap: "wrap",
                             gap: 8,
-                            width: "100%",
-                            maxWidth: 720,
+                            justifyContent: "flex-end",
+                            flex: "0 1 auto",
+                            minWidth: 0,
+                            maxWidth: "100%",
                         }}
                     >
                         <ActionButton
                             label="Undo"
+                            icon={<Undo2 size={18} />}
+                            iconOnly
                             onClick={undo}
                             accent={accent}
                             secondary
                         />
                         <ActionButton
                             label="Redo"
+                            icon={<Redo2 size={18} />}
+                            iconOnly
                             onClick={redo}
                             accent={accent}
                             secondary
                         />
                         <ActionButton
-                            label="Seleziona tutto"
+                            label="Seleziona testo"
+                            icon={<MousePointerClick size={18} />}
+                            iconOnly
                             onClick={selectAll}
                             accent={accent}
                             secondary
                         />
                         <ActionButton
-                            label="Copia"
-                            onClick={copyText}
-                            accent={accent}
-                        />
-                        <ActionButton
-                            label="Azzera campi"
+                            label="Azzera parametri"
+                            icon={<Eraser size={18} />}
+                            iconOnly
                             onClick={resetFields}
                             accent={accent}
                             secondary
                         />
                         <ActionButton
+                            label="Copia"
+                            icon={<Copy size={18} />}
+                            iconOnly
+                            onClick={copyText}
+                            accent={accent}
+                        />
+                        <ActionButton
                             label="Cancella testo"
+                            icon={<Trash2 size={18} />}
+                            iconOnly
                             onClick={clearAll}
                             accent={accent2}
                         />
@@ -859,6 +925,7 @@ export default function TextFormatterFramerResponsive(props: Props) {
                 >
                     <Accordion
                         title="Maiuscole e minuscole"
+                        icon={<CaseSensitive size={16} />}
                         subtitle="Conversioni rapide per titolo, frasi e casing casuale"
                         defaultOpen
                     >
@@ -922,6 +989,7 @@ export default function TextFormatterFramerResponsive(props: Props) {
 
                     <Accordion
                         title="Inversioni"
+                        icon={<RefreshCw size={16} />}
                         subtitle="Inverti testo completo, parole, lettere e ordine delle righe"
                         defaultOpen
                     >
@@ -974,6 +1042,7 @@ export default function TextFormatterFramerResponsive(props: Props) {
 
                     <Accordion
                         title="Ordinamenti"
+                        icon={<ArrowUpDown size={16} />}
                         subtitle="Ordina il contenuto in vari modi e aggiungi numerazione"
                     >
                         <div style={{ display: "grid", gap: 8 }}>
@@ -1036,6 +1105,7 @@ export default function TextFormatterFramerResponsive(props: Props) {
                 >
                     <Accordion
                         title="Duplicati"
+                        icon={<CopyMinus size={16} />}
                         subtitle="Elimina parole o righe duplicate con diversi criteri"
                         defaultOpen
                     >
@@ -1088,6 +1158,7 @@ export default function TextFormatterFramerResponsive(props: Props) {
 
                     <Accordion
                         title="Capoversi"
+                        icon={<Pilcrow size={16} />}
                         subtitle="Sostituisci o rimuovi i ritorni a capo"
                     >
                         <div style={{ display: "grid", gap: 8 }}>
@@ -1130,6 +1201,7 @@ export default function TextFormatterFramerResponsive(props: Props) {
 
                     <Accordion
                         title="Prefisso e suffisso"
+                        icon={<Tag size={16} />}
                         subtitle="Aggiungi testo all'inizio o alla fine di ogni riga"
                     >
                         <div style={{ display: "grid", gap: 8 }}>
@@ -1164,6 +1236,7 @@ export default function TextFormatterFramerResponsive(props: Props) {
 
                     <Accordion
                         title="Crea capoversi"
+                        icon={<Scissors size={16} />}
                         subtitle="Inserisci nuovi ritorni a capo dopo token o ogni X caratteri"
                     >
                         <div style={{ display: "grid", gap: 8 }}>
@@ -1220,6 +1293,7 @@ export default function TextFormatterFramerResponsive(props: Props) {
                 >
                     <Accordion
                         title="Righe vuote e spazi"
+                        icon={<Sparkles size={16} />}
                         subtitle="Riduci il rumore e normalizza la spaziatura"
                         defaultOpen
                     >
@@ -1272,6 +1346,7 @@ export default function TextFormatterFramerResponsive(props: Props) {
 
                     <Accordion
                         title="Accenti"
+                        icon={<Languages size={16} />}
                         subtitle="Rimuovi o converti le vocali accentate"
                     >
                         <div style={{ display: "grid", gap: 8 }}>
@@ -1301,6 +1376,7 @@ export default function TextFormatterFramerResponsive(props: Props) {
 
                     <Accordion
                         title="Ordinamento numeri"
+                        icon={<Hash size={16} />}
                         subtitle="Ordina numeri in linea o su righe separate"
                     >
                         <div style={{ display: "grid", gap: 8 }}>
@@ -1352,6 +1428,7 @@ export default function TextFormatterFramerResponsive(props: Props) {
                 >
                     <Accordion
                         title="Sostituisci testo"
+                        icon={<Search size={16} />}
                         subtitle="Cerca e sostituisci stringhe nel contenuto"
                         defaultOpen
                     >
@@ -1404,6 +1481,7 @@ export default function TextFormatterFramerResponsive(props: Props) {
 
                     <Accordion
                         title="Filtra righe"
+                        icon={<Filter size={16} />}
                         subtitle="Estrai o rimuovi righe in base a una parola"
                     >
                         <div style={{ display: "grid", gap: 8 }}>
