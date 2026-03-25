@@ -311,11 +311,13 @@ function TabButton({
 
 function ActionButton({
     label,
+    icon,
     onClick,
     accent,
     secondary = false,
 }: {
     label: string
+    icon?: string
     onClick: () => void
     accent: string
     secondary?: boolean
@@ -336,9 +338,13 @@ function ActionButton({
                 cursor: "pointer",
                 boxShadow: secondary ? "none" : "0 1px 2px rgba(0,0,0,0.08)",
                 textAlign: "left",
+                display: "flex",
+                alignItems: "center",
+                gap: 8,
             }}
         >
-            {label}
+            {icon && <span style={{ fontSize: 15 }}>{icon}</span>}
+            <span>{label}</span>
         </button>
     )
 }
@@ -397,11 +403,13 @@ function Card({
 function Accordion({
     title,
     subtitle,
+    icon,
     defaultOpen = false,
     children,
 }: {
     title: string
     subtitle?: string
+    icon?: string
     defaultOpen?: boolean
     children: React.ReactNode
 }) {
@@ -432,7 +440,18 @@ function Accordion({
                 }}
             >
                 <div style={{ minWidth: 0 }}>
-                    <div style={{ fontSize: 14, fontWeight: 700 }}>{title}</div>
+                    <div
+                        style={{
+                            fontSize: 14,
+                            fontWeight: 700,
+                            display: "flex",
+                            alignItems: "center",
+                            gap: 8,
+                        }}
+                    >
+                        {icon && <span style={{ fontSize: 15 }}>{icon}</span>}
+                        <span>{title}</span>
+                    </div>
                     {subtitle && (
                         <div
                             style={{
@@ -703,35 +722,41 @@ export default function TextFormatterFramerResponsive(props: Props) {
                     >
                         <ActionButton
                             label="Undo"
+                            icon="↩️"
                             onClick={undo}
                             accent={accent}
                             secondary
                         />
                         <ActionButton
                             label="Redo"
+                            icon="↪️"
                             onClick={redo}
                             accent={accent}
                             secondary
                         />
                         <ActionButton
                             label="Seleziona tutto"
+                            icon="🖱️"
                             onClick={selectAll}
                             accent={accent}
                             secondary
                         />
                         <ActionButton
                             label="Copia"
+                            icon="📋"
                             onClick={copyText}
                             accent={accent}
                         />
                         <ActionButton
                             label="Azzera campi"
+                            icon="🧹"
                             onClick={resetFields}
                             accent={accent}
                             secondary
                         />
                         <ActionButton
                             label="Cancella testo"
+                            icon="🗑️"
                             onClick={clearAll}
                             accent={accent2}
                         />
@@ -859,6 +884,7 @@ export default function TextFormatterFramerResponsive(props: Props) {
                 >
                     <Accordion
                         title="Maiuscole e minuscole"
+                        icon="🔠"
                         subtitle="Conversioni rapide per titolo, frasi e casing casuale"
                         defaultOpen
                     >
@@ -922,6 +948,7 @@ export default function TextFormatterFramerResponsive(props: Props) {
 
                     <Accordion
                         title="Inversioni"
+                        icon="🔄"
                         subtitle="Inverti testo completo, parole, lettere e ordine delle righe"
                         defaultOpen
                     >
@@ -974,6 +1001,7 @@ export default function TextFormatterFramerResponsive(props: Props) {
 
                     <Accordion
                         title="Ordinamenti"
+                        icon="↕️"
                         subtitle="Ordina il contenuto in vari modi e aggiungi numerazione"
                     >
                         <div style={{ display: "grid", gap: 8 }}>
@@ -1036,6 +1064,7 @@ export default function TextFormatterFramerResponsive(props: Props) {
                 >
                     <Accordion
                         title="Duplicati"
+                        icon="🧬"
                         subtitle="Elimina parole o righe duplicate con diversi criteri"
                         defaultOpen
                     >
@@ -1088,6 +1117,7 @@ export default function TextFormatterFramerResponsive(props: Props) {
 
                     <Accordion
                         title="Capoversi"
+                        icon="📑"
                         subtitle="Sostituisci o rimuovi i ritorni a capo"
                     >
                         <div style={{ display: "grid", gap: 8 }}>
@@ -1130,6 +1160,7 @@ export default function TextFormatterFramerResponsive(props: Props) {
 
                     <Accordion
                         title="Prefisso e suffisso"
+                        icon="🏷️"
                         subtitle="Aggiungi testo all'inizio o alla fine di ogni riga"
                     >
                         <div style={{ display: "grid", gap: 8 }}>
@@ -1164,6 +1195,7 @@ export default function TextFormatterFramerResponsive(props: Props) {
 
                     <Accordion
                         title="Crea capoversi"
+                        icon="✂️"
                         subtitle="Inserisci nuovi ritorni a capo dopo token o ogni X caratteri"
                     >
                         <div style={{ display: "grid", gap: 8 }}>
@@ -1220,6 +1252,7 @@ export default function TextFormatterFramerResponsive(props: Props) {
                 >
                     <Accordion
                         title="Righe vuote e spazi"
+                        icon="🧼"
                         subtitle="Riduci il rumore e normalizza la spaziatura"
                         defaultOpen
                     >
@@ -1272,6 +1305,7 @@ export default function TextFormatterFramerResponsive(props: Props) {
 
                     <Accordion
                         title="Accenti"
+                        icon="🅰️"
                         subtitle="Rimuovi o converti le vocali accentate"
                     >
                         <div style={{ display: "grid", gap: 8 }}>
@@ -1301,6 +1335,7 @@ export default function TextFormatterFramerResponsive(props: Props) {
 
                     <Accordion
                         title="Ordinamento numeri"
+                        icon="🔢"
                         subtitle="Ordina numeri in linea o su righe separate"
                     >
                         <div style={{ display: "grid", gap: 8 }}>
@@ -1352,6 +1387,7 @@ export default function TextFormatterFramerResponsive(props: Props) {
                 >
                     <Accordion
                         title="Sostituisci testo"
+                        icon="🔍"
                         subtitle="Cerca e sostituisci stringhe nel contenuto"
                         defaultOpen
                     >
@@ -1404,6 +1440,7 @@ export default function TextFormatterFramerResponsive(props: Props) {
 
                     <Accordion
                         title="Filtra righe"
+                        icon="🧲"
                         subtitle="Estrai o rimuovi righe in base a una parola"
                     >
                         <div style={{ display: "grid", gap: 8 }}>
