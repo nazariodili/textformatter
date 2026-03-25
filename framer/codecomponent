@@ -708,14 +708,19 @@ export default function TextFormatterFramerResponsive(props: Props) {
                 <div
                     style={{
                         display: "flex",
-                        justifyContent: "space-between",
                         alignItems: "flex-start",
-                        gap: 12,
+                        justifyContent: "space-between",
+                        gap: 16,
                         flexWrap: "wrap",
                         marginBottom: 12,
                     }}
                 >
-                    <div style={{ minWidth: 0 }}>
+                    <div
+                        style={{
+                            flex: "1 1 320px",
+                            minWidth: 0,
+                        }}
+                    >
                         <div
                             style={{
                                 fontSize: 22,
@@ -726,6 +731,7 @@ export default function TextFormatterFramerResponsive(props: Props) {
                         >
                             {title}
                         </div>
+
                         <div
                             style={{
                                 fontSize: 13,
@@ -743,8 +749,10 @@ export default function TextFormatterFramerResponsive(props: Props) {
                             display: "flex",
                             flexWrap: "wrap",
                             gap: 8,
-                            width: "100%",
-                            maxWidth: 720,
+                            justifyContent: "flex-end",
+                            flex: "0 1 auto",
+                            minWidth: 0,
+                            maxWidth: "100%",
                         }}
                     >
                         <ActionButton
@@ -772,19 +780,19 @@ export default function TextFormatterFramerResponsive(props: Props) {
                             secondary
                         />
                         <ActionButton
-                            label="Copia"
-                            icon={<Copy size={18} />}
-                            iconOnly
-                            onClick={copyText}
-                            accent={accent}
-                        />
-                        <ActionButton
                             label="Azzera parametri"
                             icon={<Eraser size={18} />}
                             iconOnly
                             onClick={resetFields}
                             accent={accent}
                             secondary
+                        />
+                        <ActionButton
+                            label="Copia"
+                            icon={<Copy size={18} />}
+                            iconOnly
+                            onClick={copyText}
+                            accent={accent}
                         />
                         <ActionButton
                             label="Cancella testo"
