@@ -9,7 +9,6 @@ import {
     Copy,
     Eraser,
     Trash2,
-    CaseSensitive,
     RefreshCw,
     ArrowUpDown,
     CopyMinus,
@@ -565,7 +564,6 @@ export default function TextFormatterFramerResponsive(props: Props) {
         panelColor,
         textColor,
         mutedTextColor,
-        borderColor,
         radius,
         fontSize,
     } = props
@@ -888,6 +886,8 @@ export default function TextFormatterFramerResponsive(props: Props) {
                             display: "flex",
                             alignItems: "center",
                             justifyContent: "space-between",
+                            gap: 8,
+                            flexWrap: "wrap",
                             paddingBottom: 8,
                             marginBottom: 8,
                             borderBottom: "1px solid #E5EAF2",
@@ -898,6 +898,9 @@ export default function TextFormatterFramerResponsive(props: Props) {
                                 display: "flex",
                                 alignItems: "center",
                                 gap: 6,
+                                flexWrap: "wrap",
+                                minWidth: 0,
+                                flex: "1 1 320px",
                             }}
                         >
                             <ToolbarButton
@@ -955,6 +958,7 @@ export default function TextFormatterFramerResponsive(props: Props) {
                                 }
                                 accent={accent}
                             />
+
                             <div
                                 style={{
                                     position: "relative",
@@ -964,9 +968,12 @@ export default function TextFormatterFramerResponsive(props: Props) {
                                 <ToolbarButton
                                     label="Altri strumenti"
                                     icon={<span>•••</span>}
-                                    onClick={() => setToolsOpen((prev) => !prev)}
+                                    onClick={() =>
+                                        setToolsOpen((prev) => !prev)
+                                    }
                                     accent={accent}
                                 />
+
                                 {toolsOpen && (
                                     <div
                                         style={{
@@ -976,6 +983,7 @@ export default function TextFormatterFramerResponsive(props: Props) {
                                             zIndex: 40,
                                             display: "flex",
                                             gap: 8,
+                                            alignItems: "flex-start",
                                         }}
                                     >
                                         <div
@@ -1035,7 +1043,8 @@ export default function TextFormatterFramerResponsive(props: Props) {
                                                     <span
                                                         style={{
                                                             display: "flex",
-                                                            alignItems: "center",
+                                                            alignItems:
+                                                                "center",
                                                             gap: 8,
                                                         }}
                                                     >
@@ -1046,6 +1055,7 @@ export default function TextFormatterFramerResponsive(props: Props) {
                                                 </button>
                                             ))}
                                         </div>
+
                                         <div
                                             style={{
                                                 width: 280,
@@ -1116,7 +1126,9 @@ export default function TextFormatterFramerResponsive(props: Props) {
                                                 <button
                                                     key={group.key}
                                                     onClick={() => {
-                                                        setActiveGroup(group.key)
+                                                        setActiveGroup(
+                                                            group.key
+                                                        )
                                                         setToolsOpen(false)
                                                     }}
                                                     style={{
@@ -1146,7 +1158,16 @@ export default function TextFormatterFramerResponsive(props: Props) {
                                 )}
                             </div>
                         </div>
-                        <div style={{ display: "flex", gap: 6 }}>
+
+                        <div
+                            style={{
+                                display: "flex",
+                                gap: 6,
+                                flexWrap: "wrap",
+                                justifyContent: "flex-end",
+                                flex: "0 1 auto",
+                            }}
+                        >
                             <ToolbarButton
                                 label="Undo"
                                 icon={<Undo2 size={14} />}
@@ -1173,12 +1194,11 @@ export default function TextFormatterFramerResponsive(props: Props) {
                             />
                         </div>
                     </div>
-
                 </div>
 
                 <textarea
-                    ref={textareaRef}
                     value={text}
+                    ref={textareaRef}
                     placeholder={placeholder}
                     onChange={(e) => onTextChange(e.target.value)}
                     onBlur={commitTextSnapshot}
@@ -1251,6 +1271,7 @@ export default function TextFormatterFramerResponsive(props: Props) {
                             </div>
                         </Accordion>
                     )}
+
                     {activeGroup === "ordinamenti" && (
                         <Accordion
                             title="Ordinamenti"
@@ -1304,6 +1325,7 @@ export default function TextFormatterFramerResponsive(props: Props) {
                             </div>
                         </Accordion>
                     )}
+
                     {activeGroup === "duplicati" && (
                         <Accordion
                             title="Duplicati"
@@ -1357,6 +1379,7 @@ export default function TextFormatterFramerResponsive(props: Props) {
                             </div>
                         </Accordion>
                     )}
+
                     {activeGroup === "capoversi" && (
                         <Accordion
                             title="Capoversi"
@@ -1398,6 +1421,7 @@ export default function TextFormatterFramerResponsive(props: Props) {
                             </div>
                         </Accordion>
                     )}
+
                     {activeGroup === "prefisso" && (
                         <Accordion
                             title="Prefisso e suffisso"
@@ -1432,6 +1456,7 @@ export default function TextFormatterFramerResponsive(props: Props) {
                             </div>
                         </Accordion>
                     )}
+
                     {activeGroup === "crea" && (
                         <Accordion
                             title="Crea capoversi"
@@ -1484,6 +1509,7 @@ export default function TextFormatterFramerResponsive(props: Props) {
                             </div>
                         </Accordion>
                     )}
+
                     {activeGroup === "spazi" && (
                         <Accordion
                             title="Righe vuote e spazi"
@@ -1537,6 +1563,7 @@ export default function TextFormatterFramerResponsive(props: Props) {
                             </div>
                         </Accordion>
                     )}
+
                     {activeGroup === "accenti" && (
                         <Accordion
                             title="Accenti"
@@ -1568,6 +1595,7 @@ export default function TextFormatterFramerResponsive(props: Props) {
                             </div>
                         </Accordion>
                     )}
+
                     {activeGroup === "numeri" && (
                         <Accordion
                             title="Ordinamento numeri"
@@ -1610,6 +1638,7 @@ export default function TextFormatterFramerResponsive(props: Props) {
                             </div>
                         </Accordion>
                     )}
+
                     {activeGroup === "sostituisci" && (
                         <Accordion
                             title="Sostituisci testo"
@@ -1663,6 +1692,7 @@ export default function TextFormatterFramerResponsive(props: Props) {
                             </div>
                         </Accordion>
                     )}
+
                     {activeGroup === "filtra" && (
                         <Accordion
                             title="Filtra righe"
