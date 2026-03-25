@@ -349,9 +349,11 @@ function ActionButton({
         <button
             onClick={onClick}
             style={{
-                width: "100%",
+                width: iconOnly ? 46 : "100%",
+                minWidth: iconOnly ? 46 : undefined,
                 minHeight: 42,
-                padding: "10px 12px",
+                height: iconOnly ? 46 : "auto",
+                padding: iconOnly ? 0 : "10px 12px",
                 borderRadius: 12,
                 border: secondary ? "1px solid rgba(0,0,0,0.08)" : "none",
                 background: secondary ? "white" : accent,
@@ -738,9 +740,8 @@ export default function TextFormatterFramerResponsive(props: Props) {
 
                     <div
                         style={{
-                            display: "grid",
-                            gridTemplateColumns:
-                                "repeat(auto-fit, minmax(140px, 1fr))",
+                            display: "flex",
+                            flexWrap: "wrap",
                             gap: 8,
                             width: "100%",
                             maxWidth: 720,
@@ -763,7 +764,7 @@ export default function TextFormatterFramerResponsive(props: Props) {
                             secondary
                         />
                         <ActionButton
-                            label="Seleziona tutto"
+                            label="Seleziona testo"
                             icon={<MousePointerClick size={18} />}
                             iconOnly
                             onClick={selectAll}
@@ -778,7 +779,7 @@ export default function TextFormatterFramerResponsive(props: Props) {
                             accent={accent}
                         />
                         <ActionButton
-                            label="Azzera campi"
+                            label="Azzera parametri"
                             icon={<Eraser size={18} />}
                             iconOnly
                             onClick={resetFields}
