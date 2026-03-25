@@ -37,8 +37,6 @@ type Props = {
     fontSize: number
 }
 
-type TabKey = "trasforma" | "righe" | "pulisci" | "sostituisci"
-
 function countWords(text: string) {
     const trimmed = text.trim()
     if (!trimmed) return 0
@@ -298,40 +296,6 @@ function replaceWordInsideLines(
         .join("\n")
 }
 
-function TabButton({
-    active,
-    label,
-    onClick,
-    accent,
-}: {
-    active: boolean
-    label: string
-    onClick: () => void
-    accent: string
-}) {
-    return (
-        <button
-            onClick={onClick}
-            style={{
-                padding: "9px 14px",
-                borderRadius: 8,
-                border: active ? `1px solid ${accent}` : "1px solid #E6E8EE",
-                background: active ? "rgba(10, 132, 255, 0.08)" : "#FFFFFF",
-                color: active ? accent : "#3A4256",
-                fontSize: 12,
-                fontWeight: 600,
-                cursor: "pointer",
-                whiteSpace: "nowrap",
-                flex: "0 0 auto",
-                letterSpacing: 0.1,
-                transition: "all 160ms ease",
-            }}
-        >
-            {label}
-        </button>
-    )
-}
-
 function ActionButton({
     label,
     icon,
@@ -379,6 +343,40 @@ function ActionButton({
         >
             {icon}
             {!iconOnly && <span>{label}</span>}
+        </button>
+    )
+}
+
+function ToolbarButton({
+    label,
+    icon,
+    onClick,
+    accent,
+}: {
+    label: string
+    icon: React.ReactNode
+    onClick: () => void
+    accent: string
+}) {
+    return (
+        <button
+            onClick={onClick}
+            aria-label={label}
+            title={label}
+            style={{
+                width: 30,
+                height: 30,
+                borderRadius: 6,
+                border: "1px solid #E3E8F1",
+                background: "#FFFFFF",
+                color: accent,
+                display: "grid",
+                placeItems: "center",
+                cursor: "pointer",
+                boxShadow: "0 1px 1px rgba(20, 28, 45, 0.06)",
+            }}
+        >
+            {icon}
         </button>
     )
 }
@@ -570,7 +568,6 @@ export default function TextFormatterFramerResponsive(props: Props) {
     } = props
 
     const [text, setText] = React.useState("")
-    const [tab, setTab] = React.useState<TabKey>("trasforma")
     const [toast, setToast] = React.useState("")
 
     const [history, setHistory] = React.useState<string[]>([""])
@@ -866,41 +863,81 @@ export default function TextFormatterFramerResponsive(props: Props) {
 
                 <div
                     style={{
-                        display: "flex",
-                        gap: 6,
-                        overflowX: "auto",
-                        paddingBottom: 2,
-                        scrollbarWidth: "none",
+                        fontSize: 12,
+                        fontWeight: 700,
+                        letterSpacing: 0.2,
+                        color: "#52607A",
                     }}
                 >
-                    <TabButton
-                        active={tab === "trasforma"}
-                        label="Trasforma"
-                        onClick={() => setTab("trasforma")}
-                        accent={accent}
-                    />
-                    <TabButton
-                        active={tab === "righe"}
-                        label="Righe"
-                        onClick={() => setTab("righe")}
-                        accent={accent}
-                    />
-                    <TabButton
-                        active={tab === "pulisci"}
-                        label="Pulisci"
-                        onClick={() => setTab("pulisci")}
-                        accent={accent}
-                    />
-                    <TabButton
-                        active={tab === "sostituisci"}
-                        label="Sostituisci"
-                        onClick={() => setTab("sostituisci")}
-                        accent={accent}
-                    />
+                    Trasforma — workspace unificato
                 </div>
             </div>
 
             <Card background={panelColor}>
+                <div
+                    style={{
+                        display: "flex",
+                        flexWrap: "wrap",
+                        gap: 6,
+                        alignItems: "center",
+                        paddingBottom: 8,
+                        marginBottom: 8,
+                        borderBottom: "1px solid #E5EAF2",
+                    }}
+                >
+                    <ToolbarButton
+                        label="Undo"
+                        icon={<Undo2 size={15} />}
+                        onClick={undo}
+                        accent={accent}
+                    />
+                    <ToolbarButton
+                        label="Redo"
+                        icon={<Redo2 size={15} />}
+                        onClick={redo}
+                        accent={accent}
+                    />
+                    <ToolbarButton
+                        label="Maiuscolo"
+                        icon={<CaseSensitive size={15} />}
+                        onClick={() =>
+                            applyText(text.toUpperCase(), "Convertito in maiuscolo")
+                        }
+                        accent={accent}
+                    />
+                    <ToolbarButton
+                        label="Iniziali maiuscole"
+                        icon={<Sparkles size={15} />}
+                        onClick={() => applyText(toTitleCase(text), "Iniziali aggiornate")}
+                        accent={accent}
+                    />
+                    <ToolbarButton
+                        label="Ordina A-Z"
+                        icon={<ArrowUpDown size={15} />}
+                        onClick={() => applyText(sortLinesAZ(text), "Righe ordinate A-Z")}
+                        accent={accent}
+                    />
+                    <ToolbarButton
+                        label="Rimuovi righe vuote"
+                        icon={<Pilcrow size={15} />}
+                        onClick={() =>
+                            applyText(removeEmptyLines(text), "Righe vuote rimosse")
+                        }
+                        accent={accent}
+                    />
+                    <ToolbarButton
+                        label="Copia"
+                        icon={<Copy size={15} />}
+                        onClick={copyText}
+                        accent={accent}
+                    />
+                    <ToolbarButton
+                        label="Cancella"
+                        icon={<Trash2 size={15} />}
+                        onClick={clearAll}
+                        accent={accent2}
+                    />
+                </div>
                 <textarea
                     ref={textareaRef}
                     value={text}
@@ -925,7 +962,10 @@ export default function TextFormatterFramerResponsive(props: Props) {
 
             <div style={{ height: 10 }} />
 
-            {tab === "trasforma" && (
+            <div style={{ display: "grid", gap: 10 }}>
+                <div style={{ fontSize: 12, fontWeight: 700, color: "#52607A" }}>
+                    Trasforma testo
+                </div>
                 <div
                     style={{
                         display: "grid",
@@ -1103,9 +1143,9 @@ export default function TextFormatterFramerResponsive(props: Props) {
                         </div>
                     </Accordion>
                 </div>
-            )}
-
-            {tab === "righe" && (
+                <div style={{ fontSize: 12, fontWeight: 700, color: "#52607A" }}>
+                    Righe e struttura
+                </div>
                 <div
                     style={{
                         display: "grid",
@@ -1291,9 +1331,9 @@ export default function TextFormatterFramerResponsive(props: Props) {
                         </div>
                     </Accordion>
                 </div>
-            )}
-
-            {tab === "pulisci" && (
+                <div style={{ fontSize: 12, fontWeight: 700, color: "#52607A" }}>
+                    Pulizia contenuto
+                </div>
                 <div
                     style={{
                         display: "grid",
@@ -1426,9 +1466,9 @@ export default function TextFormatterFramerResponsive(props: Props) {
                         </div>
                     </Accordion>
                 </div>
-            )}
-
-            {tab === "sostituisci" && (
+                <div style={{ fontSize: 12, fontWeight: 700, color: "#52607A" }}>
+                    Cerca, sostituisci e filtra
+                </div>
                 <div
                     style={{
                         display: "grid",
@@ -1537,7 +1577,7 @@ export default function TextFormatterFramerResponsive(props: Props) {
                         </div>
                     </Accordion>
                 </div>
-            )}
+            </div>
 
             {toast && (
                 <div
