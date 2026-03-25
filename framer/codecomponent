@@ -9,7 +9,6 @@ import {
     Copy,
     Eraser,
     Trash2,
-    CaseSensitive,
     RefreshCw,
     ArrowUpDown,
     CopyMinus,
@@ -565,7 +564,6 @@ export default function TextFormatterFramerResponsive(props: Props) {
         panelColor,
         textColor,
         mutedTextColor,
-        borderColor,
         radius,
         fontSize,
     } = props
@@ -888,6 +886,8 @@ export default function TextFormatterFramerResponsive(props: Props) {
                             display: "flex",
                             alignItems: "center",
                             justifyContent: "space-between",
+                            gap: 8,
+                            flexWrap: "wrap",
                             paddingBottom: 8,
                             marginBottom: 8,
                             borderBottom: "1px solid #E5EAF2",
@@ -898,6 +898,9 @@ export default function TextFormatterFramerResponsive(props: Props) {
                                 display: "flex",
                                 alignItems: "center",
                                 gap: 6,
+                                flexWrap: "wrap",
+                                minWidth: 0,
+                                flex: "1 1 320px",
                             }}
                         >
                             <ToolbarButton
@@ -955,14 +958,216 @@ export default function TextFormatterFramerResponsive(props: Props) {
                                 }
                                 accent={accent}
                             />
-                            <ToolbarButton
-                                label="Altri strumenti"
-                                icon={<span>•••</span>}
-                                onClick={() => setToolsOpen((prev) => !prev)}
-                                accent={accent}
-                            />
+
+                            <div
+                                style={{
+                                    position: "relative",
+                                    display: "inline-flex",
+                                }}
+                            >
+                                <ToolbarButton
+                                    label="Altri strumenti"
+                                    icon={<span>•••</span>}
+                                    onClick={() =>
+                                        setToolsOpen((prev) => !prev)
+                                    }
+                                    accent={accent}
+                                />
+
+                                {toolsOpen && (
+                                    <div
+                                        style={{
+                                            position: "absolute",
+                                            top: "calc(100% + 8px)",
+                                            left: 0,
+                                            zIndex: 40,
+                                            display: "flex",
+                                            gap: 8,
+                                            alignItems: "flex-start",
+                                        }}
+                                    >
+                                        <div
+                                            style={{
+                                                width: 300,
+                                                background: "#FFFFFF",
+                                                border: "1px solid #E3E8F1",
+                                                borderRadius: 12,
+                                                boxShadow:
+                                                    "0 12px 30px rgba(0,0,0,0.14)",
+                                                padding: 8,
+                                            }}
+                                        >
+                                            {[
+                                                {
+                                                    key: "trasforma",
+                                                    label: "Trasforma testo",
+                                                },
+                                                {
+                                                    key: "righe",
+                                                    label: "Righe e struttura",
+                                                },
+                                                {
+                                                    key: "pulisci",
+                                                    label: "Pulizia contenuto",
+                                                },
+                                                {
+                                                    key: "sostituisci",
+                                                    label: "Cerca, sostituisci e filtra",
+                                                },
+                                            ].map((section) => (
+                                                <button
+                                                    key={section.key}
+                                                    onClick={() =>
+                                                        setActiveSection(
+                                                            section.key as any
+                                                        )
+                                                    }
+                                                    style={{
+                                                        width: "100%",
+                                                        border: "none",
+                                                        background:
+                                                            activeSection ===
+                                                            section.key
+                                                                ? "#E9EEF6"
+                                                                : "transparent",
+                                                        borderRadius: 8,
+                                                        padding: "10px 10px",
+                                                        display: "flex",
+                                                        alignItems: "center",
+                                                        justifyContent:
+                                                            "space-between",
+                                                        fontSize: 14,
+                                                        cursor: "pointer",
+                                                    }}
+                                                >
+                                                    <span
+                                                        style={{
+                                                            display: "flex",
+                                                            alignItems:
+                                                                "center",
+                                                            gap: 8,
+                                                        }}
+                                                    >
+                                                        <span>◬</span>
+                                                        {section.label}
+                                                    </span>
+                                                    <ChevronRight size={14} />
+                                                </button>
+                                            ))}
+                                        </div>
+
+                                        <div
+                                            style={{
+                                                width: 280,
+                                                background: "#FFFFFF",
+                                                border: "1px solid #E3E8F1",
+                                                borderRadius: 12,
+                                                boxShadow:
+                                                    "0 12px 30px rgba(0,0,0,0.14)",
+                                                padding: 8,
+                                            }}
+                                        >
+                                            {(activeSection === "trasforma"
+                                                ? [
+                                                      {
+                                                          key: "inversioni",
+                                                          label: "Inversioni",
+                                                      },
+                                                      {
+                                                          key: "ordinamenti",
+                                                          label: "Ordinamenti",
+                                                      },
+                                                  ]
+                                                : activeSection === "righe"
+                                                  ? [
+                                                        {
+                                                            key: "duplicati",
+                                                            label: "Duplicati",
+                                                        },
+                                                        {
+                                                            key: "capoversi",
+                                                            label: "Capoversi",
+                                                        },
+                                                        {
+                                                            key: "prefisso",
+                                                            label: "Prefisso e suffisso",
+                                                        },
+                                                        {
+                                                            key: "crea",
+                                                            label: "Crea capoversi",
+                                                        },
+                                                    ]
+                                                  : activeSection === "pulisci"
+                                                    ? [
+                                                          {
+                                                              key: "spazi",
+                                                              label: "Righe vuote e spazi",
+                                                          },
+                                                          {
+                                                              key: "accenti",
+                                                              label: "Accenti",
+                                                          },
+                                                          {
+                                                              key: "numeri",
+                                                              label: "Ordinamento numeri",
+                                                          },
+                                                      ]
+                                                    : [
+                                                          {
+                                                              key: "sostituisci",
+                                                              label: "Sostituisci testo",
+                                                          },
+                                                          {
+                                                              key: "filtra",
+                                                              label: "Filtra righe",
+                                                          },
+                                                      ]
+                                            ).map((group) => (
+                                                <button
+                                                    key={group.key}
+                                                    onClick={() => {
+                                                        setActiveGroup(
+                                                            group.key
+                                                        )
+                                                        setToolsOpen(false)
+                                                    }}
+                                                    style={{
+                                                        width: "100%",
+                                                        border: "none",
+                                                        background:
+                                                            activeGroup ===
+                                                            group.key
+                                                                ? "#E9EEF6"
+                                                                : "transparent",
+                                                        borderRadius: 8,
+                                                        padding: "10px 10px",
+                                                        display: "flex",
+                                                        alignItems: "center",
+                                                        gap: 8,
+                                                        fontSize: 14,
+                                                        cursor: "pointer",
+                                                        textAlign: "left",
+                                                    }}
+                                                >
+                                                    <span>◬</span>
+                                                    {group.label}
+                                                </button>
+                                            ))}
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
                         </div>
-                        <div style={{ display: "flex", gap: 6 }}>
+
+                        <div
+                            style={{
+                                display: "flex",
+                                gap: 6,
+                                flexWrap: "wrap",
+                                justifyContent: "flex-end",
+                                flex: "0 1 auto",
+                            }}
+                        >
                             <ToolbarButton
                                 label="Undo"
                                 icon={<Undo2 size={14} />}
@@ -989,182 +1194,11 @@ export default function TextFormatterFramerResponsive(props: Props) {
                             />
                         </div>
                     </div>
-
-                    {toolsOpen && (
-                        <div
-                            style={{
-                                position: "absolute",
-                                top: 38,
-                                left: 290,
-                                zIndex: 40,
-                                display: "flex",
-                                gap: 8,
-                            }}
-                        >
-                            <div
-                                style={{
-                                    width: 300,
-                                    background: "#FFFFFF",
-                                    border: "1px solid #E3E8F1",
-                                    borderRadius: 12,
-                                    boxShadow: "0 12px 30px rgba(0,0,0,0.14)",
-                                    padding: 8,
-                                }}
-                            >
-                                {[
-                                    {
-                                        key: "trasforma",
-                                        label: "Trasforma testo",
-                                    },
-                                    {
-                                        key: "righe",
-                                        label: "Righe e struttura",
-                                    },
-                                    {
-                                        key: "pulisci",
-                                        label: "Pulizia contenuto",
-                                    },
-                                    {
-                                        key: "sostituisci",
-                                        label: "Cerca, sostituisci e filtra",
-                                    },
-                                ].map((section) => (
-                                    <button
-                                        key={section.key}
-                                        onClick={() =>
-                                            setActiveSection(section.key as any)
-                                        }
-                                        style={{
-                                            width: "100%",
-                                            border: "none",
-                                            background:
-                                                activeSection === section.key
-                                                    ? "#E9EEF6"
-                                                    : "transparent",
-                                            borderRadius: 8,
-                                            padding: "10px 10px",
-                                            display: "flex",
-                                            alignItems: "center",
-                                            justifyContent: "space-between",
-                                            fontSize: 14,
-                                            cursor: "pointer",
-                                        }}
-                                    >
-                                        <span
-                                            style={{
-                                                display: "flex",
-                                                alignItems: "center",
-                                                gap: 8,
-                                            }}
-                                        >
-                                            <span>◬</span>
-                                            {section.label}
-                                        </span>
-                                        <ChevronRight size={14} />
-                                    </button>
-                                ))}
-                            </div>
-                            <div
-                                style={{
-                                    width: 280,
-                                    background: "#FFFFFF",
-                                    border: "1px solid #E3E8F1",
-                                    borderRadius: 12,
-                                    boxShadow: "0 12px 30px rgba(0,0,0,0.14)",
-                                    padding: 8,
-                                }}
-                            >
-                                {(activeSection === "trasforma"
-                                    ? [
-                                          {
-                                              key: "inversioni",
-                                              label: "Inversioni",
-                                          },
-                                          {
-                                              key: "ordinamenti",
-                                              label: "Ordinamenti",
-                                          },
-                                      ]
-                                    : activeSection === "righe"
-                                      ? [
-                                            {
-                                                key: "duplicati",
-                                                label: "Duplicati",
-                                            },
-                                            {
-                                                key: "capoversi",
-                                                label: "Capoversi",
-                                            },
-                                            {
-                                                key: "prefisso",
-                                                label: "Prefisso e suffisso",
-                                            },
-                                            {
-                                                key: "crea",
-                                                label: "Crea capoversi",
-                                            },
-                                        ]
-                                      : activeSection === "pulisci"
-                                        ? [
-                                              {
-                                                  key: "spazi",
-                                                  label: "Righe vuote e spazi",
-                                              },
-                                              {
-                                                  key: "accenti",
-                                                  label: "Accenti",
-                                              },
-                                              {
-                                                  key: "numeri",
-                                                  label: "Ordinamento numeri",
-                                              },
-                                          ]
-                                        : [
-                                              {
-                                                  key: "sostituisci",
-                                                  label: "Sostituisci testo",
-                                              },
-                                              {
-                                                  key: "filtra",
-                                                  label: "Filtra righe",
-                                              },
-                                          ]
-                                ).map((group) => (
-                                    <button
-                                        key={group.key}
-                                        onClick={() => {
-                                            setActiveGroup(group.key)
-                                            setToolsOpen(false)
-                                        }}
-                                        style={{
-                                            width: "100%",
-                                            border: "none",
-                                            background:
-                                                activeGroup === group.key
-                                                    ? "#E9EEF6"
-                                                    : "transparent",
-                                            borderRadius: 8,
-                                            padding: "10px 10px",
-                                            display: "flex",
-                                            alignItems: "center",
-                                            gap: 8,
-                                            fontSize: 14,
-                                            cursor: "pointer",
-                                            textAlign: "left",
-                                        }}
-                                    >
-                                        <span>◬</span>
-                                        {group.label}
-                                    </button>
-                                ))}
-                            </div>
-                        </div>
-                    )}
                 </div>
 
                 <textarea
-                    ref={textareaRef}
                     value={text}
+                    ref={textareaRef}
                     placeholder={placeholder}
                     onChange={(e) => onTextChange(e.target.value)}
                     onBlur={commitTextSnapshot}
@@ -1237,6 +1271,7 @@ export default function TextFormatterFramerResponsive(props: Props) {
                             </div>
                         </Accordion>
                     )}
+
                     {activeGroup === "ordinamenti" && (
                         <Accordion
                             title="Ordinamenti"
@@ -1290,6 +1325,7 @@ export default function TextFormatterFramerResponsive(props: Props) {
                             </div>
                         </Accordion>
                     )}
+
                     {activeGroup === "duplicati" && (
                         <Accordion
                             title="Duplicati"
@@ -1343,6 +1379,7 @@ export default function TextFormatterFramerResponsive(props: Props) {
                             </div>
                         </Accordion>
                     )}
+
                     {activeGroup === "capoversi" && (
                         <Accordion
                             title="Capoversi"
@@ -1384,6 +1421,7 @@ export default function TextFormatterFramerResponsive(props: Props) {
                             </div>
                         </Accordion>
                     )}
+
                     {activeGroup === "prefisso" && (
                         <Accordion
                             title="Prefisso e suffisso"
@@ -1418,6 +1456,7 @@ export default function TextFormatterFramerResponsive(props: Props) {
                             </div>
                         </Accordion>
                     )}
+
                     {activeGroup === "crea" && (
                         <Accordion
                             title="Crea capoversi"
@@ -1470,6 +1509,7 @@ export default function TextFormatterFramerResponsive(props: Props) {
                             </div>
                         </Accordion>
                     )}
+
                     {activeGroup === "spazi" && (
                         <Accordion
                             title="Righe vuote e spazi"
@@ -1523,6 +1563,7 @@ export default function TextFormatterFramerResponsive(props: Props) {
                             </div>
                         </Accordion>
                     )}
+
                     {activeGroup === "accenti" && (
                         <Accordion
                             title="Accenti"
@@ -1554,6 +1595,7 @@ export default function TextFormatterFramerResponsive(props: Props) {
                             </div>
                         </Accordion>
                     )}
+
                     {activeGroup === "numeri" && (
                         <Accordion
                             title="Ordinamento numeri"
@@ -1596,6 +1638,7 @@ export default function TextFormatterFramerResponsive(props: Props) {
                             </div>
                         </Accordion>
                     )}
+
                     {activeGroup === "sostituisci" && (
                         <Accordion
                             title="Sostituisci testo"
@@ -1649,6 +1692,7 @@ export default function TextFormatterFramerResponsive(props: Props) {
                             </div>
                         </Accordion>
                     )}
+
                     {activeGroup === "filtra" && (
                         <Accordion
                             title="Filtra righe"
